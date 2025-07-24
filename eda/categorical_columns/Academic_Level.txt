@@ -1,0 +1,4 @@
+Academic_Level
+Graduate         325
+High School       27
+Undergraduate    353

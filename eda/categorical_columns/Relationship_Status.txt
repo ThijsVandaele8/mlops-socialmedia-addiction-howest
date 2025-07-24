@@ -1,0 +1,4 @@
+Relationship_Status
+Complicated         32
+In Relationship    289
+Single             384

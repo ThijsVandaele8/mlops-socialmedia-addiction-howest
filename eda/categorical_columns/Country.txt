@@ -1,0 +1,111 @@
+Country
+Afghanistan         1
+Albania             1
+Andorra             1
+Argentina           1
+Armenia             1
+Australia          14
+Austria             1
+Azerbaijan          1
+Bahamas             1
+Bahrain             1
+Bangladesh         20
+Belarus             1
+Belgium             1
+Bhutan              1
+Bolivia             1
+Bosnia              1
+Brazil              8
+Bulgaria            1
+Canada             34
+Chile               1
+China              16
+Colombia            1
+Costa Rica          1
+Croatia             1
+Cyprus              1
+Czech Republic      1
+Denmark            27
+Ecuador             1
+Egypt               1
+Estonia             1
+Finland             8
+France             27
+Georgia             1
+Germany            14
+Ghana               1
+Greece              1
+Hong Kong           1
+Hungary             1
+Iceland             1
+India              53
+Indonesia           1
+Iraq                1
+Ireland            27
+Israel              1
+Italy              21
+Jamaica             1
+Japan              21
+Jordan              1
+Kazakhstan          1
+Kenya               1
+Kosovo              1
+Kuwait              1
+Kyrgyzstan          1
+Latvia              1
+Lebanon             1
+Liechtenstein       1
+Lithuania           1
+Luxembourg          1
+Malaysia            8
+Maldives           19
+Malta               1
+Mexico             27
+Moldova             1
+Monaco              1
+Montenegro          1
+Morocco             1
+Nepal              19
+Netherlands         8
+New Zealand         8
+Nigeria             1
+North Macedonia     1
+Norway              1
+Oman                1
+Pakistan           19
+Panama              1
+Paraguay            1
+Peru                1
+Philippines         1
+Poland             16
+Portugal            1
+Qatar               1
+Romania             1
+Russia             21
+San Marino          1
+Serbia              1
+Singapore           8
+Slovakia            1
+Slovenia            1
+South Africa        1
+South Korea        13
+Spain              27
+Sri Lanka          19
+Sweden              1
+Switzerland        27
+Syria               1
+Taiwan              1
+Tajikistan          1
+Thailand            1
+Trinidad            1
+Turkey             27
+UAE                 8
+UK                 22
+USA                40
+Ukraine             1
+Uruguay             1
+Uzbekistan          1
+Vatican City        1
+Venezuela           1
+Vietnam             1
+Yemen               1

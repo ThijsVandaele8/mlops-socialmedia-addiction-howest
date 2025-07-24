@@ -1,0 +1,3 @@
+Affects_Academic_Performance
+No     252
+Yes    453

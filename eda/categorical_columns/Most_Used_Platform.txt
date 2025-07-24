@@ -1,0 +1,13 @@
+Most_Used_Platform
+Facebook     123
+Instagram    249
+KakaoTalk     12
+LINE          12
+LinkedIn      21
+Snapchat      13
+TikTok       154
+Twitter       30
+VKontakte     12
+WeChat        15
+WhatsApp      54
+YouTube       10
