@@ -1,0 +1,5 @@
+pandas
+ydata_profiling
+numpy==1.23.5
+pycountry-convert
+scikit-learn

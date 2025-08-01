@@ -10,6 +10,8 @@ An End-To-End MLOps project
 ## Setup
 
 - https://medium.com/@nedwinvivek/end-to-end-mlops-project-with-open-source-tools-78115cc59748
+- https://medium.com/data-science/machine-learning-operations-mlops-for-beginners-a5686bfe02b2
+- https://medium.com/@craftworkai/how-to-structure-a-machine-learning-project-for-optimal-mlops-efficiency-0046e15ce033
 
 ## EDA (Exploratory Data Analysis)
 

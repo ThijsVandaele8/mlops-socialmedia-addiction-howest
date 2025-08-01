@@ -1,3 +1,0 @@
-pandas
-ydata_profiling
-numpy==1.23.5

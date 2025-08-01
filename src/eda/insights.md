@@ -44,6 +44,9 @@ Given the many platforms with small amount of sample, I will group the platforms
 - In Relationship    289
 - Single             384
 
+**Preprocessing decision:**  
+Nothing
+
 ### Textual data
 
 **Preprocessing decision:**  
