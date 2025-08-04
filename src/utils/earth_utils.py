@@ -7,7 +7,17 @@ unkown_country_to_continents = {
     "Kosovo": "Europe"
 }
 
+countries_full_names = {
+    "UK": "United Kingdom",
+    "UAE": "United Arab Emirates",
+    "Trinidad": "Trinidad and Tobago",
+    "Bosnia": "Bosnia and Herzegovina"
+}
+
 def country_to_continent(country_name):
+    if country_name in countries_full_names:
+        country_name = countries_full_names[country_name]
+    
     if country_name in country_cache:
         return country_cache[country_name]
     
