@@ -417,4 +417,4 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-*/test
+*/test/mlruns
