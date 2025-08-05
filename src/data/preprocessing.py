@@ -2,9 +2,9 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder, FunctionTransfo
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from src.data.transformations import (
+    GroupSmallPlatforms,
     country_to_continent_step,
-    academic_performace_step,
-    group_small_platforms_step,
+    academic_performance_step,
     academic_level_step,
     drop_not_used_columns_step
 )
@@ -16,8 +16,8 @@ def create_preprocessing_pipeline():
     
     pipeline = Pipeline([
         ("country_to_continent", FunctionTransformer(country_to_continent_step, validate=False)),
-        ("academic_performence_map", FunctionTransformer(academic_performace_step, validate=False)),
-        ("group_small_platforms", FunctionTransformer(group_small_platforms_step, validate=False)),
+        ("academic_performance_map", FunctionTransformer(academic_performance_step, validate=False)),
+        ("group_small_platforms", GroupSmallPlatforms(column="Most_Used_Platform", threshold=5.0)),
         ("academic_level", FunctionTransformer(academic_level_step, validate=False)),
         ("drop_cols", FunctionTransformer(drop_not_used_columns_step, validate=False)),
         ("preprocessing", ColumnTransformer([

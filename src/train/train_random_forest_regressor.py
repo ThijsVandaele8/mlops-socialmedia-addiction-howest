@@ -1,17 +1,23 @@
-import argparse
-from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import GridSearchCV, KFold
+from src.data.preprocessing import create_preprocessing_pipeline
+from sklearn.pipeline import Pipeline
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--input_data_file", type=str, help="path to raw csv file")
-    parser.add_argument("--output_train", type=str, help="path to output train data")
-    parser.add_argument("--output_test", type=str, help="path to output test data")
-    
-    args = parser.parse_args()
-    
-    print(f"input file: {args.input_data_file}")
-    print(f"output_train: {args.output_train}")
-    print(f"output_test: {args.output_test}")
+def train_model(train_df, folds_config, grid_search_config, target_column):    
+    X = train_df.drop(columns=[target_column])
+    y = train_df[target_column]
 
-if __name__ == "__main__":
-    main()
+    cv = KFold(**folds_config) if folds_config else 5
+    
+    rfr_pipeline = Pipeline([
+        ("preprocessing", create_preprocessing_pipeline()), 
+        ("model", RandomForestRegressor(random_state=30))
+    ])
+
+    gs = GridSearchCV(rfr_pipeline, param_grid=grid_search_config, cv=cv)
+    gs.fit(X, y)
+
+    best_model = gs.best_estimator_
+    best_params = gs.best_params_
+    
+    return best_model, best_params

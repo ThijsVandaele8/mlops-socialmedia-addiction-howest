@@ -1,6 +1,7 @@
 import argparse
 import pandas as pd
 from sklearn.model_selection import train_test_split
+import uuid
 
 def main():
     parser = argparse.ArgumentParser()
@@ -8,6 +9,7 @@ def main():
     parser.add_argument("--train_percentage", type=str, help="percentage of training data")
     parser.add_argument("--output_train", type=str, help="path to output train data")
     parser.add_argument("--output_test", type=str, help="path to output test data")
+    parser.add_argument("--output_flowid", type=str, help="path to output flowid")
     
     args = parser.parse_args()
     
@@ -15,6 +17,9 @@ def main():
     print(f"train_percentage: {args.train_percentage}")
     print(f"output_train: {args.output_train}")
     print(f"output_test: {args.output_test}")
+    
+    with open(args.output_flowid, "w") as f:
+        f.write(str(uuid.uuid4()))
     
     df = pd.read_csv(args.input_data_file)
     
