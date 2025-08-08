@@ -6,7 +6,7 @@ import pandas as pd
 
 allowedModels = {
     "random_forest": "src.train.train_random_forest_regressor",
-    "ridge": ""
+    "support_vector": "src.train.train_support_vector_regressor"
 }
 
 def main():
@@ -56,7 +56,7 @@ def main():
     X = train_df.drop(columns=[target_column])
     y = train_df[target_column]
     
-    mlflow.set_experiment("addication_models")
+    mlflow.set_experiment("social_media_addiction")
     with mlflow.start_run() as run:
         mlflow.log_params(hyperparams)
         mlflow.sklearn.log_model(
@@ -70,7 +70,7 @@ def main():
         mlflow.log_param("random_state", 30)
         
         run_id = run.info.run_id
-        
+     
     with open(args.output_mlflow_runid, "w") as f:
         f.write(run_id)
 

@@ -1,0 +1,6 @@
+{
+  "model__kernel": ["rbf", "linear"],
+  "model__C": [0.1, 1, 10],
+  "model__epsilon": [0.01, 0.1, 0.5],
+  "model__gamma": ["scale", 0.01, 0.1]
+}
