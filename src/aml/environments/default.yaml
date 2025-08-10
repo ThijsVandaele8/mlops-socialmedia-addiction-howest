@@ -1,0 +1,12 @@
+$schema: https://azuremlschemas.azureedge.net/latest/environment.schema.json
+description: Default environment for all tasks
+name: aml-default
+version: 0.1.0
+
+conda_file: ./default_conda.yaml
+image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:latest
+os_type: linux
+
+tags:
+  pycountry-convert: ''
+  numpy: 1.23.5

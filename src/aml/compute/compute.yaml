@@ -1,0 +1,6 @@
+$schema: https://azuremlschemas.azureedge.net/latest/computeInstance.schema.json
+name: default-machine-cli
+type: computeinstance
+size: STANDARD_DS3_V2
+
+idle_time_before_shutdown: PT30M

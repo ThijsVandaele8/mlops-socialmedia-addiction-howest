@@ -1,0 +1,30 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+name: social-media-addiction-TEST_SPLIT_24
+display_name: Social media addiction
+
+inputs:
+  input_csv: 
+    type: uri_file
+    path: azureml:socialmedia_addiction_csv:3
+  train_percentage: 80
+
+settings:
+  default_compute: azureml:default-machine-cli
+
+jobs:
+  split_data:
+    type: command
+    component: ../components/data/train_test_split.yaml
+    inputs:
+      input_csv: ${{parent.inputs.input_csv}}
+      train_percentage: ${{parent.inputs.train_percentage}}
+    outputs:
+      output_train:
+        type: uri_file
+        path: azureml://datastores/workspaceblobstore/paths/social_media/train.csv
+        mode: upload
+      output_test:
+        type: uri_file
+        path: azureml://datastores/workspaceblobstore/paths/social_media/test.csv
+        mode: upload

@@ -1,0 +1,34 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+name: split_data
+type: command
+environment: azureml:aml-split:0.1.0
+version: 0.4.3
+display_name: Train test split pipe
+description: train test splict by train ratio x pipe
+is_deterministic: true
+resources:
+    instance_count: 1
+
+code: ../../../data/split_data.py
+command: > 
+  python split_data.py 
+  --input_data_file ${{inputs.input_csv}} 
+  $[[--train_percentage ${{inputs.train_percentage}}]] 
+  --output_train ${{outputs.output_train}} 
+  --output_test ${{outputs.output_test}}
+inputs:
+    input_csv:
+      type: uri_file
+    train_percentage:
+      type: number
+      optional: true
+      default: 80
+      min: 1
+      max: 99
+outputs:
+    output_train:
+      type: uri_file
+      mode: rw_mount
+    output_test:
+      type: uri_file
+      mode: rw_mount

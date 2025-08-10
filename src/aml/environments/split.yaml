@@ -1,0 +1,8 @@
+$schema: https://azuremlschemas.azureedge.net/latest/environment.schema.json
+description: split environment
+name: aml-split
+version: 0.1.0
+
+conda_file: ./split_conda.yaml
+image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:latest
+os_type: linux

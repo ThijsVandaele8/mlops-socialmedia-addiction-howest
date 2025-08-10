@@ -13,15 +13,15 @@ def main():
     support_vector_regressor_grid_search_config = "./src/train/config/support_vector_regressor/grid_search.json"
     mlflow_runId= "./src/test/flow_info/runid_{model}.txt"
     
-    # run_split_data(input_csv, train_percentage, train_csv, test_csv, flowid_txt)
+    run_split_data(input_csv, train_percentage, train_csv, test_csv, flowid_txt)
     
-    # run_train(train_csv, "random_forest", flowid_txt, folds_config, random_forest_regressor_grid_search_config, mlflow_runId.replace("{model}", 'rfr'))
-    # run_evaluate_model(test_csv, mlflow_runId.replace("{model}", 'rfr'))
+    run_train(train_csv, "random_forest", flowid_txt, folds_config, random_forest_regressor_grid_search_config, mlflow_runId.replace("{model}", 'rfr'))
+    run_evaluate_model(test_csv, mlflow_runId.replace("{model}", 'rfr'))
     
-    # run_train(train_csv, "support_vector", flowid_txt, folds_config, support_vector_regressor_grid_search_config, mlflow_runId.replace("{model}", 'svr'))
-    # run_evaluate_model(test_csv, mlflow_runId.replace("{model}", 'svr'))
+    run_train(train_csv, "support_vector", flowid_txt, folds_config, support_vector_regressor_grid_search_config, mlflow_runId.replace("{model}", 'svr'))
+    run_evaluate_model(test_csv, mlflow_runId.replace("{model}", 'svr'))
     
-    # run_select_best_model("mse", best_model_runid_txt, flowid_txt)
+    run_select_best_model("mse", best_model_runid_txt, flowid_txt)
     
     run_register_best_model(best_model_runid_txt)
     
