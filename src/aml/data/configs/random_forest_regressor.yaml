@@ -1,0 +1,5 @@
+$schema: https://azuremlschemas.azureedge.net/latest/data.schema.json
+name: socialmedia_addiction_random_forest_regressor_grid_search_config
+description: A json file with configuration for random forest regressor grid search
+type: uri_file
+path: ../../../config/train/random_forest_regressor/grid_search.json
