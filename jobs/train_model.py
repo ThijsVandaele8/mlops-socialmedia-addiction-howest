@@ -5,15 +5,15 @@ import sys
 import pandas as pd
 
 allowedModels = {
-    "random_forest": "src.train.train_random_forest_regressor",
-    "support_vector": "src.train.train_support_vector_regressor"
+    "random_forest": "train_random_forest_regressor",
+    "support_vector": "train_support_vector_regressor"
 }
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_train", type=str, help="Path to training data CSV file")
     parser.add_argument("--input_model", type=str, help="Model type to train (random_forest, ridge)")
-    parser.add_argument("--input_flow_id", type=str, help="Path unique training flow id")
+    parser.add_argument("--input_e2e_flow_id", type=str, help="e2e flow id")
     parser.add_argument("--input_folds", type=str, help="Path to folds config file (e.g. JSON)")
     parser.add_argument("--input_grid_search", type=str, help="Path to grid search config file (e.g. JSON)")
     
@@ -22,11 +22,13 @@ def main():
     args = parser.parse_args()
 
     print(f"Training data: {args.input_train}")
-    print(f"Folds config: {args.input_folds}")
     print(f"model: {args.input_model}")
+    print(f"Folds config: {args.input_folds}")
+    print(f"input_e2e_flow_id: {args.input_e2e_flow_id}")
     print(f"Grid search config: {args.input_grid_search}")
     print(f"Output output_mlflow_runid path: {args.output_mlflow_runid}")
-
+    print()
+    
     if args.input_model not in allowedModels:
         print(f"Error: '{args.input_model}' is not a supported model. Choose from {allowedModels}.")
         sys.exit(1)
@@ -40,9 +42,6 @@ def main():
         with open(args.input_grid_search, "r") as f:
             grid_search_config = json.load(f)
         print(f"Loaded grid search config: {grid_search_config}")
-
-    with open(args.input_flow_id, "r") as f:
-        flow_id = f.read()
 
     train_df = pd.read_csv(args.input_train)
           
@@ -66,7 +65,7 @@ def main():
             signature=mlflow.models.signature.infer_signature(X, y)
         )
         mlflow.set_tag("model_algorithm", args.input_model)
-        mlflow.set_tag("flow_id", flow_id)
+        mlflow.set_tag("flow_id", args.input_e2e_flow_id)
         mlflow.log_param("random_state", 30)
         
         run_id = run.info.run_id

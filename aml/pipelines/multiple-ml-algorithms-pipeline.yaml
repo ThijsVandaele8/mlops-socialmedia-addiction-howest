@@ -1,0 +1,56 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+name: social-media-addiction-TRAIN-5
+display_name: Social media addiction
+
+inputs:
+  input_csv: 
+    type: uri_file
+    path: azureml:socialmedia_addiction_csv:3
+  train_percentage: 80
+  e2e_flow_id: abc123
+
+settings:
+  default_compute: azureml:default-machine-cli
+
+jobs:
+  split_data:
+    type: command
+    component: ../components/data/train_test_split.yaml
+    inputs:
+      input_csv: ${{parent.inputs.input_csv}}
+      train_percentage: ${{parent.inputs.train_percentage}}
+    outputs:
+      output_train:
+        type: uri_file
+        path: azureml://datastores/workspaceblobstore/paths/social_media/train.csv
+        mode: mount
+      output_test:
+        type: uri_file
+        path: azureml://datastores/workspaceblobstore/paths/social_media/test.csv
+        mode: mount
+  train_model_random_forest_regressor:
+    type: command
+    component: ../components/train/train_model.yaml
+    inputs:
+      train_csv: 
+        type: uri_file
+        mode: ro_mount
+        path: ${{parent.jobs.split_data.outputs.output_train}}
+      model_algorithm: random_forest
+      e2e_flow_id: ${{parent.inputs.e2e_flow_id}}
+      folds_config: 
+        type: uri_file
+        mode: ro_mount
+        path: azureml:socialmedia_addiction_folds_config:1
+      grid_search_config: 
+        type: uri_file
+        mode: ro_mount
+        path: azureml:socialmedia_addiction_random_forest_regressor_grid_search_config:1
+    outputs:
+      mlflow_runid:
+        type: uri_file
+
+
+
+

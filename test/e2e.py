@@ -80,7 +80,7 @@ def run_train(train_csv, model_algorithm, flow_id, folds_config, grid_search_con
         "python", "-m", "src.train.train",
         "--input_train", train_csv,
         "--input_model", model_algorithm,
-        "--input_flow_id", flow_id,
+        "--input_e2e_flow_id", flow_id,
         "--input_folds", folds_config, 
         "--input_grid_search", grid_search_config,
         "--output_mlflow_runid", mlflow_runid

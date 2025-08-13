@@ -1,0 +1,34 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+name: train_model
+type: command
+environment: azureml:aml-default:0.1.2
+version: 0.1.4
+display_name: Train model
+description: Train model
+is_deterministic: true
+resources:
+    instance_count: 1
+
+code: ../../../train
+command: > 
+  python train.py 
+  --input_train ${{inputs.train_csv}}
+  --input_model ${{inputs.model_algorithm}}
+  --input_e2e_flow_id ${{inputs.e2e_flow_id}}
+  --input_folds ${{inputs.folds_config}}
+  --input_grid_search ${{inputs.grid_search_config}}
+  --output_mlflow_runid ${{outputs.mlflow_runid}}
+inputs:
+    train_csv:
+      type: uri_file
+    model_algorithm:
+      type: string
+    e2e_flow_id:
+      type: string
+    folds_config:
+      type: uri_file
+    grid_search_config:
+      type: uri_file
+outputs:
+    mlflow_runid:
+      type: uri_file
