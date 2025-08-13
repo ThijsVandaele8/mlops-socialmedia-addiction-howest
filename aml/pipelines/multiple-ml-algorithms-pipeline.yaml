@@ -1,6 +1,6 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
-name: social-media-addiction-TRAIN-5
+name: social-media-addiction-TRAIN-49
 display_name: Social media addiction
 
 inputs:
@@ -47,6 +47,27 @@ jobs:
         type: uri_file
         mode: ro_mount
         path: azureml:socialmedia_addiction_random_forest_regressor_grid_search_config:1
+    outputs:
+      mlflow_runid:
+        type: uri_file
+  train_model_support_vector_regressor:
+    type: command
+    component: ../components/train/train_model.yaml
+    inputs:
+      train_csv: 
+        type: uri_file
+        mode: ro_mount
+        path: ${{parent.jobs.split_data.outputs.output_train}}
+      model_algorithm: support_vector
+      e2e_flow_id: ${{parent.inputs.e2e_flow_id}}
+      folds_config: 
+        type: uri_file
+        mode: ro_mount
+        path: azureml:socialmedia_addiction_folds_config:1
+      grid_search_config: 
+        type: uri_file
+        mode: ro_mount
+        path: azureml:socialmedia_addiction_support_vector_regressor_grid_search_config:1
     outputs:
       mlflow_runid:
         type: uri_file

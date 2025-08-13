@@ -1,4 +1,4 @@
-from src.utils.earth_utils import country_to_continent
+from ..utils.earth_utils import country_to_continent
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 
@@ -30,9 +30,7 @@ def country_to_continent_step(df):
         
     return df
 
-def academic_performance_step(df):
-    pd.set_option('future.no_silent_downcasting', True)
-    
+def academic_performance_step(df):    
     df = df.copy()
     df["Affects_Academic_Performance"] = df["Affects_Academic_Performance"].map({"Yes": True, "No": False})
     return df

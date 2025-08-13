@@ -1,6 +1,6 @@
 from sklearn.svm import SVR
 from sklearn.model_selection import GridSearchCV, KFold
-from src.data.preprocessing import create_preprocessing_pipeline
+from ..data.preprocessing import create_preprocessing_pipeline
 from sklearn.pipeline import Pipeline
 
 

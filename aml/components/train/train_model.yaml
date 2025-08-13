@@ -1,23 +1,24 @@
 $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
 name: train_model
 type: command
-environment: azureml:aml-default:0.1.2
-version: 0.1.4
+environment: azureml:socialmedia-env:0.2.7
+version: 0.1.44
 display_name: Train model
 description: Train model
 is_deterministic: true
 resources:
     instance_count: 1
 
-code: ../../../train
+code: ../../../jobs/train_model.py
 command: > 
-  python train.py 
+  python train_model.py 
   --input_train ${{inputs.train_csv}}
   --input_model ${{inputs.model_algorithm}}
   --input_e2e_flow_id ${{inputs.e2e_flow_id}}
   --input_folds ${{inputs.folds_config}}
   --input_grid_search ${{inputs.grid_search_config}}
   --output_mlflow_runid ${{outputs.mlflow_runid}}
+  --output_model ${{outputs.model}}
 inputs:
     train_csv:
       type: uri_file
@@ -31,4 +32,6 @@ inputs:
       type: uri_file
 outputs:
     mlflow_runid:
+      type: uri_file
+    model:
       type: uri_file

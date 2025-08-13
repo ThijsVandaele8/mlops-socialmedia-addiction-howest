@@ -7,6 +7,10 @@ An End-To-End MLOps project
 
 # Articles
 
+## Python Wheel
+
+- https://medium.com/@jonathan.hoffman91/a-step-by-step-guide-to-building-python-wheels-4ed8160809a2
+
 ## Setup
 
 - https://medium.com/@nedwinvivek/end-to-end-mlops-project-with-open-source-tools-78115cc59748

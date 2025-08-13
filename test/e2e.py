@@ -2,16 +2,16 @@ import subprocess
 import os
 
 def main():   
-    input_csv = "./src/datasets/bronze/Students_Social_Media_Addiction.csv"
+    input_csv = "./data/bronze/Students_Social_Media_Addiction.csv"
     train_percentage = "80"
-    train_csv = "./src/test/data/train.csv"
-    test_csv = "./src/test/data/test.csv"
-    flowid_txt = "./src/test/flow_info/flowid.txt"
+    train_csv = "./test/data/train.csv"
+    test_csv = "./test/data/test.csv"
+    flowid_txt = "./test/flow_info/flowid.txt"
     best_model_runid_txt = "./src/test/flow_info/best_model_runid.txt"
-    folds_config = "./src/train/config/folds.json"
+    folds_config = "./train/config/folds.json"
     random_forest_regressor_grid_search_config = "./src/train/config/random_forest_regressor/grid_search.json"
     support_vector_regressor_grid_search_config = "./src/train/config/support_vector_regressor/grid_search.json"
-    mlflow_runId= "./src/test/flow_info/runid_{model}.txt"
+    mlflow_runId= "./test/flow_info/runid_{model}.txt"
     
     run_split_data(input_csv, train_percentage, train_csv, test_csv, flowid_txt)
     
@@ -56,7 +56,6 @@ def run_select_best_model(metric, best_model, flow_id):
 
     # assert os.path.exists(mlflow_runid), "mlflow_runid.txt not created!"
     print("✅ select_best_model.py ran successfully and output files are present.")
-
     
 def run_evaluate_model(test_csv, mlflow_runid):
     command = [

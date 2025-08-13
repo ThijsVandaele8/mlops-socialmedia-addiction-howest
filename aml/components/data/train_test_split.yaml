@@ -9,7 +9,7 @@ is_deterministic: true
 resources:
     instance_count: 1
 
-code: ../../../data/split_data.py
+code: ../../../jobs/split_data.py
 command: > 
   python split_data.py 
   --input_data_file ${{inputs.input_csv}} 

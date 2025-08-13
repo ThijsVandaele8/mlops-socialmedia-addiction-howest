@@ -1,77 +1,91 @@
 import argparse
 import json
-import mlflow
 import sys
 import pandas as pd
+import mlflow
+import mlflow.sklearn
+import joblib
+from azureml.core import Run
 
+# Importeer je trainingsfuncties
+from socialmedia_modeling.train.train_random_forest_regressor import train_model as train_model_random_forest
+from socialmedia_modeling.train.train_support_vector_regressor import train_model as train_model_support_vector
+
+# Ondersteunde modellen
 allowedModels = {
-    "random_forest": "train_random_forest_regressor",
-    "support_vector": "train_support_vector_regressor"
+    "random_forest": train_model_random_forest,
+    "support_vector": train_model_support_vector
 }
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--input_train", type=str, help="Path to training data CSV file")
-    parser.add_argument("--input_model", type=str, help="Model type to train (random_forest, ridge)")
-    parser.add_argument("--input_e2e_flow_id", type=str, help="e2e flow id")
-    parser.add_argument("--input_folds", type=str, help="Path to folds config file (e.g. JSON)")
-    parser.add_argument("--input_grid_search", type=str, help="Path to grid search config file (e.g. JSON)")
+def main(): 
     
-    parser.add_argument("--output_mlflow_runid", type=str, help="Path to mlflow runid")
+    # CLI argumenten
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input_train", type=str, required=True, help="Path to training data CSV file")
+    parser.add_argument("--input_model", type=str, required=True, help="Model type to train (random_forest, support_vector)")
+    parser.add_argument("--input_e2e_flow_id", type=str, required=True, help="E2E flow id for tagging")
+    parser.add_argument("--input_folds", type=str, help="Path to folds config file (JSON)")
+    parser.add_argument("--input_grid_search", type=str, help="Path to grid search config file (JSON)")
+    parser.add_argument("--output_mlflow_runid", type=str, required=True, help="File to save MLflow run ID")
+    parser.add_argument("--output_model", type=str, required=True, help="File to save trained model")
 
     args = parser.parse_args()
 
-    print(f"Training data: {args.input_train}")
-    print(f"model: {args.input_model}")
-    print(f"Folds config: {args.input_folds}")
-    print(f"input_e2e_flow_id: {args.input_e2e_flow_id}")
-    print(f"Grid search config: {args.input_grid_search}")
-    print(f"Output output_mlflow_runid path: {args.output_mlflow_runid}")
-    print()
-    
+    # Validatie modelkeuze
     if args.input_model not in allowedModels:
-        print(f"Error: '{args.input_model}' is not a supported model. Choose from {allowedModels}.")
+        print(f"Error: '{args.input_model}' is not supported. Choose from {list(allowedModels.keys())}")
         sys.exit(1)
 
+    # Configs inladen
+    folds_config = {}
     if args.input_folds:
         with open(args.input_folds, "r") as f:
             folds_config = json.load(f)
         print(f"Loaded folds config: {folds_config}")
 
+    grid_search_config = {}
     if args.input_grid_search:
         with open(args.input_grid_search, "r") as f:
             grid_search_config = json.load(f)
         print(f"Loaded grid search config: {grid_search_config}")
 
+    # Data inladen
     train_df = pd.read_csv(args.input_train)
-          
-    # load train algorithm          
-    module_name = allowedModels[args.input_model]
-    train_module = __import__(module_name, fromlist=["train_model"])
-    train_model = train_module.train_model
-    
     target_column = "Addicted_Score"
-    model, hyperparams = train_model(train_df, folds_config, grid_search_config, target_column)
     X = train_df.drop(columns=[target_column])
     y = train_df[target_column]
+
+    # Model trainen
+    train_function = allowedModels[args.input_model]
+    model, hyperparams = train_function(train_df, folds_config, grid_search_config, target_column)
+
+    # MLflow child run starten
+    parent_run = Run.get_context()
+    is_aml_run = parent_run.id != "OfflineRun"
+
+    joblib.dump(model, f"{args.output_model}")
+
+    mlflow.log_param("Train_algorithm", args.input_model)
+    with mlflow.start_run(run_name=args.input_model, nested=is_aml_run) as child_run:
+        log_model_run(child_run, model, X, y, hyperparams, args)
+
+def log_model_run(mlflow_run, model, X, y, hyperparams, args):
+    mlflow.log_params(hyperparams)
+
+    # WERKT VOORLOPIG NIET IN AZURE 
+    # mlflow.sklearn.log_model(
+    #     model,
+    #     artifact_path="model",
+    #     input_example=X.iloc[:5],
+    #     signature=mlflow.models.signature.infer_signature(X, y)
+    # )
     
-    mlflow.set_experiment("social_media_addiction")
-    with mlflow.start_run() as run:
-        mlflow.log_params(hyperparams)
-        mlflow.sklearn.log_model(
-            sk_model=model,
-            artifact_path="model",
-            input_example=X.iloc[:5],
-            signature=mlflow.models.signature.infer_signature(X, y)
-        )
-        mlflow.set_tag("model_algorithm", args.input_model)
-        mlflow.set_tag("flow_id", args.input_e2e_flow_id)
-        mlflow.log_param("random_state", 30)
+    mlflow.set_tag("model_algorithm", args.input_model)
+    mlflow.set_tag("flow_id", args.input_e2e_flow_id)
+    mlflow.log_param("random_state", 30)
         
-        run_id = run.info.run_id
-     
     with open(args.output_mlflow_runid, "w") as f:
-        f.write(run_id)
+        f.write(f"{mlflow_run.info.run_id}")
 
 if __name__ == "__main__":
     main()

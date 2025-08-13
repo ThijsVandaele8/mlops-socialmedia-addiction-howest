@@ -1,6 +1,6 @@
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GridSearchCV, KFold
-from src.data.preprocessing import create_preprocessing_pipeline
+from ..data.preprocessing import create_preprocessing_pipeline
 from sklearn.pipeline import Pipeline
 
 def train_model(train_df, folds_config, grid_search_config, target_column):    

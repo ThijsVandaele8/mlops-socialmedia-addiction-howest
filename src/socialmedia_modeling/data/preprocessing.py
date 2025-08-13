@@ -1,7 +1,7 @@
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, FunctionTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
-from src.data.transformations import (
+from .transformations import (
     GroupSmallPlatforms,
     country_to_continent_step,
     academic_performance_step,
