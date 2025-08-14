@@ -1,0 +1,25 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+name: collect_run_ids
+type: command
+environment: azureml:aml-split:0.1.0
+version: 0.1.4
+display_name: Collect run ids
+description: Collect run ids
+is_deterministic: true
+resources:
+    instance_count: 1
+
+code: ../../../jobs/collect_runids.py
+command: >
+  python collect_runids.py
+  --random_forest_runid ${{inputs.run_id_random_forest}}
+  --support_vector_runid ${{inputs.run_id_support_vector}}
+  --runid_list ${{outputs.run_ids}}
+inputs:
+  run_id_random_forest:
+    type: uri_file
+  run_id_support_vector:
+    type: uri_file
+outputs:
+  run_ids:
+    type: uri_file

@@ -1,0 +1,24 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+name: evaluate_model
+type: command
+environment: azureml:socialmedia-env:0.2.7
+version: 0.1.2
+display_name: Evaluate model
+description: Evaluate model
+is_deterministic: true
+resources:
+    instance_count: 1
+
+code: ../../../jobs/evaluate_model.py
+command: > 
+  python evaluate_model.py 
+  --input_test ${{inputs.test_csv}}
+  --input_mlflow_runid ${{inputs.input_mlflow_runid}}
+  --input_model ${{inputs.model}}
+inputs:
+    test_csv:
+      type: uri_file
+    input_mlflow_runid:
+      type: uri_file
+    model:
+      type: uri_file

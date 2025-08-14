@@ -18,7 +18,7 @@ allowedModels = {
 }
 
 def main(): 
-    
+    mlflow.log_param("", "")
     # CLI argumenten
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_train", type=str, required=True, help="Path to training data CSV file")
@@ -65,7 +65,6 @@ def main():
 
     joblib.dump(model, f"{args.output_model}")
 
-    mlflow.log_param("Train_algorithm", args.input_model)
     with mlflow.start_run(run_name=args.input_model, nested=is_aml_run) as child_run:
         log_model_run(child_run, model, X, y, hyperparams, args)
 

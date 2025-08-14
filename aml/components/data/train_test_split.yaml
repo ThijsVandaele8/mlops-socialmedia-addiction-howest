@@ -2,7 +2,7 @@ $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.jso
 name: split_data
 type: command
 environment: azureml:aml-split:0.1.0
-version: 0.4.3
+version: 0.4.4
 display_name: Train test split pipe
 description: train test splict by train ratio x pipe
 is_deterministic: true

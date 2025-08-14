@@ -1,0 +1,28 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+name: select_best_model
+type: command
+environment: azureml:socialmedia-env:0.2.7
+version: 0.1.10
+display_name: Select best model
+description: Select best model
+is_deterministic: true
+resources:
+    instance_count: 1
+
+code: ../../../jobs/select_best_model.py
+command: > 
+  python select_best_model.py 
+  --input_flow_id ${{inputs.e2e_flowid}}
+  --input_metric ${{inputs.select_metric}}
+  --input_run_ids ${{inputs.input_run_ids}}
+  --output_best_run_id ${{outputs.best_run_id}}
+inputs:
+    e2e_flowid:
+      type: string
+    select_metric:
+      type: string
+    input_run_ids: 
+      type: uri_file
+outputs:
+  best_run_id:
+    type: uri_file

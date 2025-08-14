@@ -1,5 +1,5 @@
 $schema: https://azuremlschemas.azureedge.net/latest/data.schema.json
-name: socialmedia_addiction_csv
+name: socialmedia_addiction_data
 description: CSV file of socialmedia addiction
 type: uri_file
-path: ../../../../data/bronze/Students_Social_Media_Addiction.csv
+path: ../../../data/bronze/Students_Social_Media_Addiction.csv

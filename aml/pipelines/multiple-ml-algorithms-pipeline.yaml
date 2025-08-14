@@ -1,14 +1,15 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
-name: social-media-addiction-TRAIN-49
+name: social-media-addiction-BEST_MODEL-25
 display_name: Social media addiction
 
 inputs:
   input_csv: 
     type: uri_file
-    path: azureml:socialmedia_addiction_csv:3
+    path: azureml:socialmedia_addiction_data:1
   train_percentage: 80
-  e2e_flow_id: abc123
+  e2e_flow_id: E2E-FLOW-3
+  select_best_model_metric: mse
 
 settings:
   default_compute: azureml:default-machine-cli
@@ -29,6 +30,7 @@ jobs:
         type: uri_file
         path: azureml://datastores/workspaceblobstore/paths/social_media/test.csv
         mode: mount
+  # Train and Evaluate Random Forest Regressor
   train_model_random_forest_regressor:
     type: command
     component: ../components/train/train_model.yaml
@@ -50,6 +52,27 @@ jobs:
     outputs:
       mlflow_runid:
         type: uri_file
+      model:
+        type: uri_file
+
+  evaluate_model_random_forest_regressor:
+    type: command
+    component: ../components/evaluate/evaluate_model.yaml
+    inputs:
+      test_csv:
+        type: uri_file
+        mode: ro_mount
+        path: ${{parent.jobs.split_data.outputs.output_test}}
+      input_mlflow_runid:
+        type: uri_file
+        mode: ro_mount
+        path: ${{parent.jobs.train_model_random_forest_regressor.outputs.mlflow_runid}}
+      model:
+        type: uri_file
+        mode: ro_mount
+        path: ${{parent.jobs.train_model_random_forest_regressor.outputs.model}}
+
+  # Train and Evaluate Support Vector Regressor
   train_model_support_vector_regressor:
     type: command
     component: ../components/train/train_model.yaml
@@ -71,7 +94,54 @@ jobs:
     outputs:
       mlflow_runid:
         type: uri_file
+      model:
+        type: uri_file
 
+  evaluate_model_support_vector_regressor:
+    type: command
+    component: ../components/evaluate/evaluate_model.yaml
+    inputs:
+      test_csv:
+        type: uri_file
+        mode: ro_mount
+        path: ${{parent.jobs.split_data.outputs.output_test}}
+      input_mlflow_runid:
+        type: uri_file
+        mode: ro_mount
+        path: ${{parent.jobs.train_model_support_vector_regressor.outputs.mlflow_runid}}
+      model:
+        type: uri_file
+        mode: ro_mount
+        path: ${{parent.jobs.train_model_support_vector_regressor.outputs.model}}
 
+  # Collect runids
+  collect_runids:
+    type: command
+    component: ../components/evaluate/collect_runids.yaml
+    inputs:
+      run_id_random_forest:
+        type: uri_file
+        mode: ro_mount
+        path: ${{parent.jobs.train_model_random_forest_regressor.outputs.mlflow_runid}}
+      run_id_support_vector:
+        type: uri_file
+        mode: ro_mount
+        path: ${{parent.jobs.train_model_support_vector_regressor.outputs.mlflow_runid}}
+    outputs:
+      run_ids:
+        type: uri_file
 
-
+  # Select best model
+  select_best_model:
+    type: command
+    component: ../components/evaluate/select_best_model.yaml
+    inputs:
+      e2e_flowid: ${{parent.inputs.e2e_flow_id}}
+      select_metric: ${{parent.inputs.select_best_model_metric}}
+      input_run_ids:
+        type: uri_file
+        mode: ro_mount
+        path: ${{parent.jobs.collect_runids.outputs.run_ids}}
+    outputs:
+      best_run_id:
+        type: uri_file
