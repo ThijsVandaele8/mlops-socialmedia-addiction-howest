@@ -1,0 +1,24 @@
+name: Socialmedia Addiction
+
+on:
+    push:
+        branches: ["main"]
+    workflow_dispatch:
+
+env:
+  GROUP: "HAC9909-MasterclassDeployingAISolutions"
+  WORKSPACE: "vandaele-thijs-ml"
+  LOCATION: "WestEurope"
+  dockerregistry: ghcr.io/thijsvandaele8/mlops-animals-api
+
+jobs:
+    Azure-ML-setup:
+        runs-on: self-hosted
+        steps:
+          - name: Check out repo
+            uses: actions/checkout@v4
+
+          - name: Azure Login
+            uses: azure/login@v1
+            with:
+             creds: ${{ secrets.AZURE_CREDENTIALS }}
