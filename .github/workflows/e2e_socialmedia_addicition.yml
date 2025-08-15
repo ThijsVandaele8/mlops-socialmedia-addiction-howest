@@ -35,5 +35,6 @@ jobs:
           - name: Ensure compute is running
             run: ./scripts/azure/ensure_compute_is_running.ps1 -ComputeName default-machine-cli
 
-
+          - name: Create environments
+            run: ./scripts/azure/create_environments.ps1
              

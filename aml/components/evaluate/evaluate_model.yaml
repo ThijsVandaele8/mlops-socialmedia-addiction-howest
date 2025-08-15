@@ -1,7 +1,7 @@
 $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
 name: evaluate_model
 type: command
-environment: azureml:socialmedia-env:0.2.7
+environment: azureml:socialmedia-env:0.2.10
 version: 0.1.11
 display_name: Evaluate model
 description: Evaluate model

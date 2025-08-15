@@ -1,7 +1,7 @@
 $schema: https://azuremlschemas.azureedge.net/latest/environment.schema.json
 description: Default environment for all tasks
 name: socialmedia-env
-version: 0.2.9
+version: 0.2.10
 
 conda_file: ./social_media_conda.yaml
 image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:latest
