@@ -30,7 +30,7 @@ jobs:
             run: az configure --defaults group=${{ env.GROUP }} workspace=${{ env.WORKSPACE }} location=${{ env.LOCATION }}
 
           - name: Create compute
-            run: az ml compute create --file ./aml/environment/compute/compute.yaml
+            run: az ml compute create --file ./aml/compute/compute.yaml
 
           - name: Ensure compute is running
             shell: pwsh
