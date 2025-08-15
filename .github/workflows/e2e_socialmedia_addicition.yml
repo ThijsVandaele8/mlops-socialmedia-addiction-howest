@@ -25,3 +25,7 @@ jobs:
 
           - name: Check if azure ml extension is installed
             run: az extension add --name ml
+
+          - name: Azure configure defaults
+            run: |
+                az configure --defaults group=${{ env.GROUP }} workspace=${{ env.WORKSPACE }} location=${{ env.LOCATION }}
