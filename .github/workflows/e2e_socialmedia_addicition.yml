@@ -37,4 +37,7 @@ jobs:
 
           - name: Create environments
             run: ./scripts/azure/create_environments.ps1
+
+          - name: Create components
+            run: ./scripts/azure/create_components.ps1
              
