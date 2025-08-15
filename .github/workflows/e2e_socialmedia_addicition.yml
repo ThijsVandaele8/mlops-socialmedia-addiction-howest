@@ -30,7 +30,7 @@ jobs:
             run: az configure --defaults group=${{ env.GROUP }} workspace=${{ env.WORKSPACE }} location=${{ env.LOCATION }}
 
           - name: Create compute
-            run: ./scripts/azure/ensure_compute_is_running.ps1 -ComputeName default-machine-cli
+            run: ./scripts/azure/create_compute_if_not_exists.ps1 -ComputeName default-machine-cli
 
           - name: Ensure compute is running
             run: ./scripts/azure/ensure_compute_is_running.ps1 -ComputeName default-machine-cli
