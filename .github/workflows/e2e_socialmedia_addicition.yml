@@ -30,19 +30,11 @@ jobs:
             run: az configure --defaults group=${{ env.GROUP }} workspace=${{ env.WORKSPACE }} location=${{ env.LOCATION }}
 
           - name: Create compute
-            run: az ml compute create --file ./azml/environment/compute/compute.yaml
+            run: az ml compute create --file ./aml/environment/compute/compute.yaml
 
           - name: Ensure compute is running
-            run: | 
-                  $STATE=$(az ml compute show --name default-machine-cli --query "state" -o tsv)
-
-                    if($STATE -ne "Running")
-                    {
-                        echo "Compute is not running"
-                        az ml compute start --name default-machine-cli
-                    }
-
-                    echo "Compute is running"
+            shell: pwsh
+            run: ./scripts/azure/ensure_compute_is_running.ps1 -ComputeName default-machine-cli
 
 
              
