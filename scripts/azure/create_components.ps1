@@ -4,5 +4,5 @@ $components = Get-ChildItem -Path ".\aml\components" -File -Recurse |
 foreach($component in $components)
 {
     Write-Host "Create component $component"
-    az ml component create --file $environment.FullName
+    az ml component create --file $component
 }
