@@ -17,8 +17,7 @@ allowedModels = {
     "support_vector": train_model_support_vector
 }
 
-def main(): 
-    mlflow.log_param("", "")
+def main():
     # CLI argumenten
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_train", type=str, required=True, help="Path to training data CSV file")
@@ -59,32 +58,28 @@ def main():
     train_function = allowedModels[args.input_model]
     model, hyperparams = train_function(train_df, folds_config, grid_search_config, target_column)
 
-    # MLflow child run starten
-    parent_run = Run.get_context()
-    is_aml_run = parent_run.id != "OfflineRun"
-
     joblib.dump(model, f"{args.output_model}")
 
-    with mlflow.start_run(run_name=args.input_model, nested=is_aml_run) as child_run:
-        log_model_run(child_run, model, X, y, hyperparams, args)
+    log_model_run(model, X, y, hyperparams, args)
 
-def log_model_run(mlflow_run, model, X, y, hyperparams, args):
+def log_model_run(model, X, y, hyperparams, args):
     mlflow.log_params(hyperparams)
-
-    # WERKT VOORLOPIG NIET IN AZURE 
-    # mlflow.sklearn.log_model(
-    #     model,
-    #     artifact_path="model",
-    #     input_example=X.iloc[:5],
-    #     signature=mlflow.models.signature.infer_signature(X, y)
-    # )
+    mlflow.log_param("random_state", 30)
     
     mlflow.set_tag("model_algorithm", args.input_model)
     mlflow.set_tag("flow_id", args.input_e2e_flow_id)
-    mlflow.log_param("random_state", 30)
-        
+
+    # Can't make this work    
+    # signature = mlflow.models.signature.infer_signature(X, y)
+    # mlflow.sklearn.log_model(
+    #     sk_model=model,
+    #     artifact_path="model",
+    #     input_example=X.iloc[:5],
+    #     signature=signature
+    # )
+
     with open(args.output_mlflow_runid, "w") as f:
-        f.write(f"{mlflow_run.info.run_id}")
+        f.write(mlflow.active_run().info.run_id)
 
 if __name__ == "__main__":
     main()

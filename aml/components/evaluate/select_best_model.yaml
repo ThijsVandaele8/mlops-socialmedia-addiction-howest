@@ -1,8 +1,8 @@
 $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
 name: select_best_model
 type: command
-environment: azureml:socialmedia-env:0.2.7
-version: 0.1.10
+environment: azureml:socialmedia-env:0.2.8
+version: 0.2.4
 display_name: Select best model
 description: Select best model
 is_deterministic: true
@@ -14,15 +14,25 @@ command: >
   python select_best_model.py 
   --input_flow_id ${{inputs.e2e_flowid}}
   --input_metric ${{inputs.select_metric}}
-  --input_run_ids ${{inputs.input_run_ids}}
-  --output_best_run_id ${{outputs.best_run_id}}
+  --random_forest_model ${{inputs.random_forest_model}}
+  --random_forest_runId ${{inputs.random_forest_runId}}
+  --support_vector_model ${{inputs.support_vector_model}}
+  --support_vector_runId ${{inputs.support_vector_runId}}
+  --output_folder ${{outputs.output_folder}}
 inputs:
     e2e_flowid:
       type: string
     select_metric:
       type: string
-    input_run_ids: 
+    random_forest_model:
+      type: uri_file
+    random_forest_runId:
+      type: uri_file
+    support_vector_model:
+      type: uri_file
+    support_vector_runId:
       type: uri_file
 outputs:
-  best_run_id:
-    type: uri_file
+    output_folder:
+      type: uri_folder
+      mode: rw_mount

@@ -1,0 +1,18 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+name: register_model
+type: command
+environment: azureml:socialmedia-env:0.2.8
+version: 0.1.30
+display_name: Register model
+description: Register model
+is_deterministic: true
+resources:
+    instance_count: 1
+
+code: ../../../jobs/register_model.py
+command: > 
+  python register_model.py 
+  --model_runid ${{inputs.model_runid}}
+inputs:
+    model_runid:
+      type: uri_file

@@ -7,16 +7,20 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_test", type=str, help="Path to test data CSV file")
-    parser.add_argument("--input_mlflow_runid", type=str, help="Path to mlflow runid")
+    parser.add_argument("--mlflow_runid", type=str, help="Path to mlflow runid")
     parser.add_argument("--input_model", type=str, help="Path to trained model")
+    parser.add_argument("--mlflow_runid_of_model", type=str)
+    parser.add_argument("--output_model", type=str)
 
     args = parser.parse_args()
 
     print(f"Test data: {args.input_test}")
-    print(f"runid path: {args.input_mlflow_runid}")
+    print(f"runid path: {args.mlflow_runid}")
     print(f"input_model: {args.input_model}")
+    print(f"mlflow_runid_of_model: {args.mlflow_runid_of_model}")
+    print(f"output_model: {args.output_model}")
     
-    with open(args.input_mlflow_runid, "r") as f:
+    with open(args.mlflow_runid, "r") as f:
         run_id = f.read().strip()
     print(f"Loaded run_id: {run_id}")
 
@@ -41,6 +45,11 @@ def main():
         mlflow.log_metric("mse", mse)
         mlflow.log_metric("mae", mae)
         mlflow.log_metric("r2", r2)
+    
+    with open(args.mlflow_runid_of_model, "w") as f:
+        f.write(run_id)
+        
+    joblib.dump(model, f"{args.output_model}")
     
 if __name__ == "__main__":
     main()

@@ -1,6 +1,7 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
-name: social-media-addiction-BEST_MODEL-25
+name: social-media-addiction-REGISTER-MODEL-52
+
 display_name: Social media addiction
 
 inputs:
@@ -10,6 +11,12 @@ inputs:
   train_percentage: 80
   e2e_flow_id: E2E-FLOW-3
   select_best_model_metric: mse
+
+outputs:
+  model: 
+    mode: upload
+  registration_details:
+    mode: upload
 
 settings:
   default_compute: azureml:default-machine-cli
@@ -63,7 +70,7 @@ jobs:
         type: uri_file
         mode: ro_mount
         path: ${{parent.jobs.split_data.outputs.output_test}}
-      input_mlflow_runid:
+      mlflow_runid:
         type: uri_file
         mode: ro_mount
         path: ${{parent.jobs.train_model_random_forest_regressor.outputs.mlflow_runid}}
@@ -71,6 +78,11 @@ jobs:
         type: uri_file
         mode: ro_mount
         path: ${{parent.jobs.train_model_random_forest_regressor.outputs.model}}
+    outputs:
+      mlflow_runid_of_model:
+        type: uri_file
+      output_model:
+        type: uri_file
 
   # Train and Evaluate Support Vector Regressor
   train_model_support_vector_regressor:
@@ -105,7 +117,7 @@ jobs:
         type: uri_file
         mode: ro_mount
         path: ${{parent.jobs.split_data.outputs.output_test}}
-      input_mlflow_runid:
+      mlflow_runid:
         type: uri_file
         mode: ro_mount
         path: ${{parent.jobs.train_model_support_vector_regressor.outputs.mlflow_runid}}
@@ -113,22 +125,10 @@ jobs:
         type: uri_file
         mode: ro_mount
         path: ${{parent.jobs.train_model_support_vector_regressor.outputs.model}}
-
-  # Collect runids
-  collect_runids:
-    type: command
-    component: ../components/evaluate/collect_runids.yaml
-    inputs:
-      run_id_random_forest:
-        type: uri_file
-        mode: ro_mount
-        path: ${{parent.jobs.train_model_random_forest_regressor.outputs.mlflow_runid}}
-      run_id_support_vector:
-        type: uri_file
-        mode: ro_mount
-        path: ${{parent.jobs.train_model_support_vector_regressor.outputs.mlflow_runid}}
     outputs:
-      run_ids:
+      mlflow_runid_of_model:
+        type: uri_file
+      output_model:
         type: uri_file
 
   # Select best model
@@ -138,10 +138,23 @@ jobs:
     inputs:
       e2e_flowid: ${{parent.inputs.e2e_flow_id}}
       select_metric: ${{parent.inputs.select_best_model_metric}}
-      input_run_ids:
-        type: uri_file
-        mode: ro_mount
-        path: ${{parent.jobs.collect_runids.outputs.run_ids}}
+
+      random_forest_model: ${{parent.jobs.evaluate_model_random_forest_regressor.outputs.output_model}}
+      random_forest_runId: ${{parent.jobs.evaluate_model_random_forest_regressor.outputs.mlflow_runid_of_model}}
+    
+      support_vector_model: ${{parent.jobs.evaluate_model_support_vector_regressor.outputs.output_model}}
+      support_vector_runId: ${{parent.jobs.evaluate_model_support_vector_regressor.outputs.mlflow_runid_of_model}}
     outputs:
-      best_run_id:
-        type: uri_file
+      output_folder: ${{parent.outputs.model}}
+
+  # Register model
+  register:
+    type: command
+    component: azureml://registries/azureml/components/register_model/versions/0.0.9
+    inputs:
+      model_name: socialmedia_addication
+      model_type: custom_model
+      model_version: 1
+      model_path: ${{parent.jobs.select_best_model.outputs.output_folder}}
+    outputs:
+      registration_details_folder: ${{ parent.outputs.registration_details }}

@@ -1,8 +1,8 @@
 $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
 name: train_model
 type: command
-environment: azureml:socialmedia-env:0.2.7
-version: 0.2.2
+environment: azureml:socialmedia-env:0.2.8
+version: 0.2.9
 display_name: Train model
 description: Train model
 is_deterministic: true
