@@ -419,6 +419,7 @@ FodyWeavers.xsd
 
 */test/mlruns
 **/mlruns/
+/inference/
 
 # Python build & packaging
 *.egg-info/

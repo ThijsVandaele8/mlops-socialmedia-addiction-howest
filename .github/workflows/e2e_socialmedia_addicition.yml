@@ -13,6 +13,7 @@ env:
 
 jobs:
     Azure-ML-setup:
+        if: false
         runs-on: self-hosted
         steps:
           - name: Check out repo
@@ -43,3 +44,25 @@ jobs:
              
           - name: Create pipeline
             run: az ml job create --file ./aml/pipelines/multiple-ml-algorithms-pipeline.yaml --stream --set name=socialmedia-addiction-${{github.sha}}-${{github.run_id}}
+    
+    download-and-package:
+      runs-on: self-hosted
+      steps:
+          - name: Check out repo
+            uses: actions/checkout@v4
+
+          - name: Azure Login
+            uses: azure/login@v1
+            with:
+             creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+          - name: Check if azure ml extension is installed
+            run: az extension add --name ml
+
+          - name: Azure configure defaults
+            run: az configure --defaults group=${{ env.GROUP }} workspace=${{ env.WORKSPACE }} location=${{ env.LOCATION }}
+
+          - name: download model
+            run: ./scripts/azure/download_model.ps1
+
+          
