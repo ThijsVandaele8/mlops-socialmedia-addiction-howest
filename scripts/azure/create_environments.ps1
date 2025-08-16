@@ -8,7 +8,7 @@ $condaFiles = Get-ChildItem -Path ".\aml\environments" -File |
 
 foreach($condaFile in $condaFiles)
 {
-    (Get-Content $environment).Replace('{socialmedia-sourcecode-uri}', $socialmedia_SourceCode_Uri) | Set-Content $environment
+    (Get-Content $condaFile).Replace('{socialmedia-sourcecode-uri}', $socialmedia_SourceCode_Uri) | Set-Content $condaFile
 }
 
 $environments = Get-ChildItem -Path ".\aml\environments" -File |
