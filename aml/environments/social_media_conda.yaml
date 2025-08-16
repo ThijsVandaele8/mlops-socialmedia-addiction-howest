@@ -18,3 +18,4 @@ dependencies:
       - mlflow-skinny==2.7.1
       - azureml-mlflow==1.42.0
       - pycountry-convert
+      - pycountry

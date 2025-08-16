@@ -33,3 +33,9 @@ def country_to_continent(country_name):
 
     country_cache[country_name] = continent
     return continent
+
+def country_by_ISO(iso: str):
+    if pc.countries.get(alpha_2=iso): return iso
+    if pc.countries.get(alpha_3=iso): return iso
+    if pc.countries.get(numeric=iso): return iso
+    raise ValueError(f"Invalid ISO country code: {iso}")
