@@ -37,7 +37,7 @@ jobs:
                   echo "socialmedia_sourcecode_uri=$uriWithSas" >> $env:GITHUB_OUTPUT
 
           - name: Create environments
-            run: ./scripts/azure/create_environments.ps1 -socialmedia_SourceCode_Uri ${{ steps.socialmedia_sourcecode.outputs.socialmedia_sourcecode_uri }}
+            run: ./scripts/azure/create_environments.ps1 -socialmedia_SourceCode_Uri '${{ steps.socialmedia_sourcecode.outputs.socialmedia_sourcecode_uri }}'
 
           - name: Create components
             run: ./scripts/azure/create_components.ps1
