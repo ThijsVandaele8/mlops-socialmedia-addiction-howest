@@ -30,7 +30,6 @@ jobs:
           - name: Azure configure defaults
             run: az configure --defaults group=${{ env.GROUP }} workspace=${{ env.WORKSPACE }} location=${{ env.LOCATION }}
 
-            # this script outputs socialmedia_sourcecode_uri
           - name: build and upload socialmedia python code
             id: socialmedia_sourcecode
             run: $uriWithSas = ./scripts/azure/build_and_upload_socialmedia_python_scripts.ps1 -workspaceName ${{ env.WORKSPACE }} -resourceGroup ${{ env.GROUP }}
@@ -55,7 +54,7 @@ jobs:
 
 
     download-and-package:
-      if: false
+      if: true
       runs-on: self-hosted
       steps:
           - name: Check out repo
@@ -75,4 +74,8 @@ jobs:
           - name: download model
             run: ./scripts/azure/download_model.ps1
 
-          
+          - name: Docker -- Upload API code from Inference
+            uses: actions/upload-artifact@v4.3.3
+            with:
+              name: docker-config
+              path: inference
