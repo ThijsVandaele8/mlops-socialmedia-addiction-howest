@@ -30,21 +30,31 @@ jobs:
           - name: Azure configure defaults
             run: az configure --defaults group=${{ env.GROUP }} workspace=${{ env.WORKSPACE }} location=${{ env.LOCATION }}
 
-          - name: Create compute
-            run: ./scripts/azure/create_compute_if_not_exists.ps1 -ComputeName default-machine-cli
-
-          - name: Ensure compute is running
-            run: ./scripts/azure/ensure_compute_is_running.ps1 -ComputeName default-machine-cli
+          - name: build and upload socialmedia python code
+            id: socialmedia_sourcecode
+            run: |
+                  $uriWithSas = ./scripts/azure/build_and_upload_socialmedia_python_scripts.ps1 -workspaceName ${{ env.WORKSPACE }} -resourceGroup ${{ env.GROUP }}
+                  echo "socialmedia_sourcecode_uri=$uriWithSas" >> $env:GITHUB_OUTPUT
 
           - name: Create environments
             run: ./scripts/azure/create_environments.ps1
 
           - name: Create components
             run: ./scripts/azure/create_components.ps1
-             
+
+          - name: Create compute
+            run: ./scripts/azure/create_compute_if_not_exists.ps1 -ComputeName default-machine-cli
+
+          - name: Ensure compute is running
+            run: ./scripts/azure/ensure_compute_is_running.ps1 -ComputeName default-machine-cli
+
           - name: Create pipeline
-            run: az ml job create --file ./aml/pipelines/multiple-ml-algorithms-pipeline.yaml --stream --set name=socialmedia-addiction-${{github.sha}}-${{github.run_id}}
-    
+            run: az ml job create --file ./aml/pipelines/multiple-ml-algorithms-pipeline.yaml --stream --set name=socialmedia-addiction-${{ github.sha }}-${{ github.run_id }}
+
+        outputs:
+          socialmedia_sourcecode_uri: ${{ steps.socialmedia_sourcecode.outputs.socialmedia_sourcecode_uri }}
+
+
     download-and-package:
       runs-on: self-hosted
       steps:
