@@ -1,3 +1,16 @@
+param (
+    [Parameter(Mandatory=$true)]
+    [string]$socialmedia_SourceCode_Uri
+)
+
+$condaFiles = Get-ChildItem -Path ".\aml\environments" -File |
+    Where-Object { $_.Name -like '*conda.yaml' } 
+
+foreach($condaFile in $condaFiles)
+{
+    (Get-Content $environment).Replace('{socialmedia-sourcecode-uri}', $socialmedia_SourceCode_Uri) | Set-Content $environment
+}
+
 $environments = Get-ChildItem -Path ".\aml\environments" -File |
     Where-Object { $_.Name -notlike '*conda.yaml' } 
 
