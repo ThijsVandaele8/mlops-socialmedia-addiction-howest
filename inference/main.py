@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .socialmedia_addiction_input import SocialmediaAddictionInput
+from socialmedia_addiction_input import SocialmediaAddictionInput
 
 import os
 import joblib
@@ -23,9 +23,9 @@ model: Pipeline = joblib.load(model_path)
 @app.post('/socialmedia-addiction')
 async def calculateAddiction(dto: SocialmediaAddictionInput):
     input = dto.to_dict()
-    
     input_df = pd.DataFrame(input)
     
     addiction_score = model.predict(input_df)[0]
     addiction_score = round(float(addiction_score), 1) 
+    
     return {"addiction_score": addiction_score}

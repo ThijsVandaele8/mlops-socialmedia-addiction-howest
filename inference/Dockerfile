@@ -6,7 +6,12 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt --no-cache-dir
 
-COPY . .
+ARG SOCIALMEDIA_WHEEL_URL
+RUN test -n "$SOCIALMEDIA_WHEEL_URL" || (echo "SOCIALMEDIA_WHEEL_URL is required" && exit 1) \
+    && pip install --no-cache-dir "$SOCIALMEDIA_WHEEL_URL"
+
+COPY ./inference .
+COPY ../models ./models
 
 EXPOSE 8000
 

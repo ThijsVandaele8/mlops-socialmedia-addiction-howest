@@ -1,8 +1,9 @@
 from typing import Annotated
-from pydantic import BaseModel, Field, PrivateAttr, field_validator, model_validator
+from pydantic import BaseModel, Field, PrivateAttr, field_validator
 
-from .enums import GenderEnum, AcademicLevelEnum, MostUsedPlatformEnum, RelantionshipStatusEnum
-from socialmedia_modeling.utils.earth_utils import country_by_ISO
+from enums import GenderEnum, AcademicLevelEnum, MostUsedPlatformEnum, RelantionshipStatusEnum
+# from socialmedia_modeling.utils.earth_utils import country_by_ISO
+import pycountry
 
 class SocialmediaAddictionInput(BaseModel):
     age: Annotated[int, Field(ge=18, le=25)]
@@ -24,10 +25,8 @@ class SocialmediaAddictionInput(BaseModel):
     _country: str = PrivateAttr(default=None)
     @property
     def country(self):
-        print(self._country)
         if self._country is None:
            self._country = country_by_ISO(self.country_iso)
-        
         return self._country
 
     @field_validator("country_iso")
@@ -51,3 +50,16 @@ class SocialmediaAddictionInput(BaseModel):
             'Relationship_Status': [self.relationship_status.value],
             'Conflicts_Over_Social_Media': [self.conflicts_over_social_media]
         }
+        
+def country_by_ISO(iso: str):
+    try:
+        country_obj = pycountry.countries.get(alpha_2=iso)
+        if not country_obj:
+            country_obj = pycountry.countries.get(alpha_3=iso)
+        if not country_obj:
+            country_obj = pycountry.countries.get(numeric=iso)
+        if not country_obj:
+            raise ValueError(f"Invalid ISO country code: {iso}")
+        return country_obj.name
+    except LookupError:
+        raise ValueError(f"Invalid ISO country code: {iso}")
