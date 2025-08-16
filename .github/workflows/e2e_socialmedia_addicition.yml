@@ -30,11 +30,10 @@ jobs:
           - name: Azure configure defaults
             run: az configure --defaults group=${{ env.GROUP }} workspace=${{ env.WORKSPACE }} location=${{ env.LOCATION }}
 
+            # this script outputs socialmedia_sourcecode_uri
           - name: build and upload socialmedia python code
             id: socialmedia_sourcecode
-            run: |
-                  $uriWithSas = ./scripts/azure/build_and_upload_socialmedia_python_scripts.ps1 -workspaceName ${{ env.WORKSPACE }} -resourceGroup ${{ env.GROUP }}
-                  echo "socialmedia_sourcecode_uri=$uriWithSas" >> $env:GITHUB_OUTPUT
+            run: $uriWithSas = ./scripts/azure/build_and_upload_socialmedia_python_scripts.ps1 -workspaceName ${{ env.WORKSPACE }} -resourceGroup ${{ env.GROUP }}
 
           - name: Create environments
             run: ./scripts/azure/create_environments.ps1 -socialmedia_SourceCode_Uri '${{ steps.socialmedia_sourcecode.outputs.socialmedia_sourcecode_uri }}'

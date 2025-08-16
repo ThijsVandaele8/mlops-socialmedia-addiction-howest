@@ -31,4 +31,5 @@ $sasToken = az storage blob generate-sas `
 $blobUrl = "https://$($datastoreInfo.account).blob.core.windows.net/$($datastoreInfo.container)/$blobName"
 $uriWithSas = "$blobUrl`?$sasToken"
 
-Write-Output $uriWithSas
+"socialmedia_sourcecode_uri=$uriWithSas" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+

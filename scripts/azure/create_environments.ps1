@@ -2,7 +2,7 @@ param (
     [Parameter(Mandatory=$true)]
     [string]$socialmedia_SourceCode_Uri
 )
-
+Write-Host "SourceCode_Uri $socialmedia_SourceCode_Uri"
 $condaFiles = Get-ChildItem -Path ".\aml\environments" -File |
     Where-Object { $_.Name -like '*conda.yaml' } 
 
