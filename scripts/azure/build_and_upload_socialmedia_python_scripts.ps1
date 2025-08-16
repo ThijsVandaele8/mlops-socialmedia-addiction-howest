@@ -7,9 +7,7 @@ param (
 
 python setup.py bdist_wheel
 
-az ml data create --file '.\aml\data\bin\modeling.yaml'
-
-$path = az ml data create --file '.\aml\data\bin\modeling.yaml' --query "path" --output tsv
+$path = az ml data create --file './aml/data/bin/modeling.yaml' --query "path" --output tsv
 $blobName = $path -replace ".*?/paths/", ""
 
 $datastoreInfo = az ml datastore show `
