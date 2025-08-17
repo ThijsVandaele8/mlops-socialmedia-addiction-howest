@@ -41,8 +41,26 @@ jobs:
                     -dataYamlPath ./aml/data/datasets/socialmedia-addiction.yaml `
                     -dataName socialmedia_addiction_data
 
-          - name: provide dataset
-            run: ./scripts/azure/ensure_dataset_is_uploaded.ps1
+          - name: folds config -- Ensure data exists
+            run: | 
+                  ./scripts/azure/create_datafile_if_changed.ps1 `
+                    -contentPath ./config/train/folds.json `
+                    -dataYamlPath ./aml/data/configs/folds.yaml `
+                    -dataName socialmedia_addiction_folds_config
+
+          - name: random forest regressor grid search config -- Ensure data exists
+            run: | 
+                  ./scripts/azure/create_datafile_if_changed.ps1 `
+                    -contentPath ./config/train/random_forest_regressor/grid_search.json `
+                    -dataYamlPath ./aml/data/configs/random_forest_regressor.yaml `
+                    -dataName socialmedia_addiction_random_forest_regressor_grid_search_config
+
+          - name: support vector grid search config -- Ensure data exists
+            run: | 
+                  ./scripts/azure/create_datafile_if_changed.ps1 `
+                    -contentPath ./config/train/support_vector_regressor/grid_search.json `
+                    -dataYamlPath ./aml/data/configs/support_vector_regressor.yaml `
+                    -dataName socialmedia_addiction_support_vector_regressor_grid_search_config
 
           - name: build and upload socialmedia python code
             id: socialmedia_sourcecode
