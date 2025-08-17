@@ -11,11 +11,10 @@ env:
   LOCATION: "WestEurope"
   dockerregistry: ghcr.io/thijsvandaele8/mlops-socialmedia-addiction-api
   computename: default-machine-cli 
-  no_azure_setup: 'true'
+  no_azure_setup: 'false'
 
 jobs:
     Azure-ML-setup:
-        if: true
         runs-on: self-hosted
         outputs:
           socialmedia_sourcecode_uri: ${{ steps.socialmedia_sourcecode.outputs.socialmedia_sourcecode_uri }}
