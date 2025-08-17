@@ -9,56 +9,64 @@ env:
   GROUP: "HAC9909-MasterclassDeployingAISolutions"
   WORKSPACE: "vandaele-thijs-ml"
   LOCATION: "WestEurope"
-  dockerregistry: ghcr.io/thijsvandaele8/mlops-animals-api
+  dockerregistry: ghcr.io/thijsvandaele8/mlops-socialmedia-addiction-api
+  no_azure_setup: true
 
 jobs:
     Azure-ML-setup:
         if: true
         runs-on: self-hosted
+        outputs:
+          socialmedia_sourcecode_uri: ${{ steps.socialmedia_sourcecode.outputs.socialmedia_sourcecode_uri }}
         steps:
           - name: Check out repo
             uses: actions/checkout@v4
 
           - name: Azure Login
+            if: ${{ env.no_azure_setup != true }}
             uses: azure/login@v1
             with:
              creds: ${{ secrets.AZURE_CREDENTIALS }}
 
           - name: Check if azure ml extension is installed
+            if: ${{ env.no_azure_setup != true }}
             run: az extension add --name ml
 
           - name: Azure configure defaults
+            if: ${{ env.no_azure_setup != true }}
             run: az configure --defaults group=${{ env.GROUP }} workspace=${{ env.WORKSPACE }} location=${{ env.LOCATION }}
 
           - name: build and upload socialmedia python code
             id: socialmedia_sourcecode
             run: $uriWithSas = ./scripts/azure/build_and_upload_socialmedia_python_scripts.ps1 -workspaceName ${{ env.WORKSPACE }} -resourceGroup ${{ env.GROUP }}
 
-          - name: Socialmedia source code -- Upload source code
+          - name: Socialmedia Build source code -- Upload source code
             uses: actions/upload-artifact@v4.3.3
             with:
-              name:  Socialmedia-SourceCode
+              name:  Socialmedia-SourceCode-dist
               path: dist
 
           - name: Create environments
+            if: ${{ env.no_azure_setup != true }}
             run: ./scripts/azure/create_environments.ps1 -socialmedia_SourceCode_Uri '${{ steps.socialmedia_sourcecode.outputs.socialmedia_sourcecode_uri }}'
 
           - name: Create components
+            if: ${{ env.no_azure_setup != true }}
             run: ./scripts/azure/create_components.ps1
 
           - name: Create compute
+            if: ${{ env.no_azure_setup != true }}
             run: ./scripts/azure/create_compute_if_not_exists.ps1 -ComputeName default-machine-cli
 
           - name: Ensure compute is running
+            if: ${{ env.no_azure_setup != true }}
             run: ./scripts/azure/ensure_compute_is_running.ps1 -ComputeName default-machine-cli
 
           - name: Create pipeline
+            if: ${{ env.no_azure_setup != true }}
             run: az ml job create --file ./aml/pipelines/multiple-ml-algorithms-pipeline.yaml --stream --set name=socialmedia-addiction-${{ github.sha }}-${{ github.run_id }}
 
-        outputs:
-          socialmedia_sourcecode_uri: ${{ steps.socialmedia_sourcecode.outputs.socialmedia_sourcecode_uri }}
-
-    download-and-package:
+    download:
       if: true
       runs-on: self-hosted
       steps:
@@ -84,3 +92,49 @@ jobs:
             with:
               name: docker-config
               path: inference
+
+    build-and-push:
+      name: build and push to ghcr
+      needs: download
+      runs-on: self-hosted
+      outputs:
+        image_tag: ${{ steps.docker-meta-data.outputs.tags }}
+      steps:
+        - name: docker meta-data
+          id: docker-meta-data
+          uses: docker/metadata-action@v5.5.1
+          with:
+            images: |
+              ${{ env.dockerregistry }}
+            tags: |
+              type=ref,event=branch
+              type=sha
+        
+        - name: Docker -- Login to GHCR
+          uses: docker/login-action@v3.2.0
+          with:
+            registry: ghcr.io
+            username: ${{ github.repository_owner }}
+            password: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Docker -- Download API Code for Inference
+          uses: actions/download-artifact@v4.1.7
+          with:
+            name: docker-config
+            path: inference
+
+        - name: Source code dist -- Download
+          uses: actions/download-artifact@v4.1.7
+          with:
+            name: Socialmedia-SourceCode-dist
+            path: dist
+
+        - name: Docker Build and push
+          id: docker_build
+          uses: docker/build-push-action@v5.3.0
+          with:
+            context: ./
+            file: ./inference
+            push: true
+            tags: ${{ steps.docker-meta-data.outputs.tags }}
+  
