@@ -36,9 +36,9 @@ jobs:
 
           - name: socialmedia-addiction dataset -- Ensure data exists
             run: | 
-                  ./scripts/azure/create_datafile_if_changed.ps1 
-                    -contentPath ./data/bronze/Students_Social_Media_Addiction.csv 
-                    -dataYamlPath ./aml/data/datasets/socialmedia-addiction.yaml
+                  ./scripts/azure/create_datafile_if_changed.ps1 `
+                    -contentPath ./data/bronze/Students_Social_Media_Addiction.csv `
+                    -dataYamlPath ./aml/data/datasets/socialmedia-addiction.yaml `
                     -dataName socialmedia_addiction_data
 
           - name: provide dataset
