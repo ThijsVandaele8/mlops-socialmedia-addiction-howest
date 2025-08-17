@@ -13,7 +13,7 @@ env:
 
 jobs:
     Azure-ML-setup:
-        if: false
+        if: true
         runs-on: self-hosted
         steps:
           - name: Check out repo
