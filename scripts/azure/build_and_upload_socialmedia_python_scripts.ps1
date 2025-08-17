@@ -1,5 +1,7 @@
 param (
     [Parameter(Mandatory=$true)]
+    [string]$wheelPath,
+    [Parameter(Mandatory=$true)]
     [string]$contentPath,
     [Parameter(Mandatory=$true)]
     [string]$dataYamlPath,
@@ -19,12 +21,15 @@ python setup.py bdist_wheel
 $fullContentPath = (Resolve-Path $contentPath).Path
 Write-Host "Full content path: $fullContentPath"
 
+$fullWheelPath = (Resolve-Path $wheelPath).Path
+Write-Host "Full content path: $fullWheelPath"
+
 $dataInfo = Test-CloudFileHash -contentPath $fullContentPath -dataName $dataName
 
 if (-not $dataInfo.IsSame)
 {
     $dataYamlContent = Get-Content $dataYamlPath
-    $dataYamlContent = $dataYamlContent -replace "{{hash}}", $dataInfo.LocalHash -replace "{{path}}", $fullContentPath
+    $dataYamlContent = $dataYamlContent -replace "{{hash}}", $dataInfo.LocalHash -replace "{{path}}", $fullWheelPath
 
     $tempYamlPath = "$env:TEMP\$dataName.yaml"
     $dataYamlContent | Set-Content -Path $tempYamlPath -Encoding UTF8

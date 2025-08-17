@@ -66,7 +66,8 @@ jobs:
             run: | 
                 ./scripts/azure/build_and_upload_socialmedia_python_scripts.ps1 `
                     -workspaceName ${{ env.WORKSPACE }} -resourceGroup ${{ env.GROUP }} `
-                    -contentPath ./dist/socialmedia_mlops-0.1.2-py3-none-any.whl `
+                    -wheelPath ./dist/socialmedia_mlops-0.1.2-py3-none-any.whl
+                    -contentPath ./src `
                     -dataYamlPath ./aml/data/code/socialmedia_sourcecode_wheel.yaml `
                     -dataName socialmedia_modeling_whl
 
