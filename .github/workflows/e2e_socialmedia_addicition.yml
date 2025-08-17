@@ -67,24 +67,15 @@ jobs:
             with:
              creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-          - name: Check if azure ml extension is installed
-            run: az extension add --name ml
-
           - name: Azure configure defaults
             run: az configure --defaults group=${{ env.GROUP }} workspace=${{ env.WORKSPACE }} location=${{ env.LOCATION }}
 
           - name: download model
             run: ./scripts/azure/download_model.ps1
 
-          - name: Docker -- Upload API code from Inference
-            uses: actions/upload-artifact@v4.3.3
-            with:
-              name: docker-config
-              path: inference
-
     build-and-push:
       name: build and push to ghcr
-      needs: [download, Azure-ML-setup]
+      needs: download
       runs-on: self-hosted
       outputs:
         image_tag: ${{ steps.docker-meta-data.outputs.tags }}
@@ -106,12 +97,6 @@ jobs:
             username: ${{ github.repository_owner }}
             password: ${{ secrets.GITHUB_TOKEN }}
 
-        - name: Docker -- Download API Code for Inference
-          uses: actions/download-artifact@v4.1.7
-          with:
-            name: docker-config
-            path: inference
-
         - name: Docker Build and push
           id: docker_build
           uses: docker/build-push-action@v5.3.0
@@ -121,3 +106,13 @@ jobs:
             push: true
             tags: ${{ steps.docker-meta-data.outputs.tags }}
   
+    Deploy_to_k8s_with_helm:
+      env:
+        namespace: socialmedia-addiction-ns
+      name: Deploy to k8s with helm 
+      runs-on: self-hosted
+      needs: build-and-push
+      steps:
+        - name: Helm upgrade or install
+          run: ./scripts/azure/helm_install.ps1 -namespace ${{env.namespace}} -githubsha ${{ github.sha }} -dockerimage ${{ env.dockerregistry }}
+

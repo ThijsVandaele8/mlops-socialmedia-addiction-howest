@@ -1,0 +1,17 @@
+deployment:
+  name: deployment-socialmedia-addiction
+  replicas: 3
+
+pod:
+  label: socialmedia-addiction-app
+
+container:
+  name: socialmedia-addiciton-container
+  image: 
+  port: 8000
+
+service:
+  name: svc-socialmedia-addiction
+  port: 8000
+  targetPort: 8000
+  nodePort: 30003
