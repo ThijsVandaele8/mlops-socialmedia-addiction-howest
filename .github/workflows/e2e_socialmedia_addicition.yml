@@ -10,7 +10,7 @@ env:
   WORKSPACE: "vandaele-thijs-ml"
   LOCATION: "WestEurope"
   dockerregistry: ghcr.io/thijsvandaele8/mlops-socialmedia-addiction-api
-  no_azure_setup: true
+  no_azure_setup: 'true'
 
 jobs:
     Azure-ML-setup:
@@ -23,17 +23,17 @@ jobs:
             uses: actions/checkout@v4
 
           - name: Azure Login
-            if: ${{ env.no_azure_setup != true }}
+            if: ${{ env.no_azure_setup != 'true' }}
             uses: azure/login@v1
             with:
              creds: ${{ secrets.AZURE_CREDENTIALS }}
 
           - name: Check if azure ml extension is installed
-            if: ${{ env.no_azure_setup != true }}
+            if: ${{ env.no_azure_setup != 'true' }}
             run: az extension add --name ml
 
           - name: Azure configure defaults
-            if: ${{ env.no_azure_setup != true }}
+            if: ${{ env.no_azure_setup != 'true' }}
             run: az configure --defaults group=${{ env.GROUP }} workspace=${{ env.WORKSPACE }} location=${{ env.LOCATION }}
 
           - name: build and upload socialmedia python code
@@ -47,23 +47,23 @@ jobs:
               path: dist
 
           - name: Create environments
-            if: ${{ env.no_azure_setup != true }}
+            if: ${{ env.no_azure_setup != 'true' }}
             run: ./scripts/azure/create_environments.ps1 -socialmedia_SourceCode_Uri '${{ steps.socialmedia_sourcecode.outputs.socialmedia_sourcecode_uri }}'
 
           - name: Create components
-            if: ${{ env.no_azure_setup != true }}
+            if: ${{ env.no_azure_setup != 'true' }}
             run: ./scripts/azure/create_components.ps1
 
           - name: Create compute
-            if: ${{ env.no_azure_setup != true }}
+            if: ${{ env.no_azure_setup != 'true' }}
             run: ./scripts/azure/create_compute_if_not_exists.ps1 -ComputeName default-machine-cli
 
           - name: Ensure compute is running
-            if: ${{ env.no_azure_setup != true }}
+            if: ${{ env.no_azure_setup != 'true' }}
             run: ./scripts/azure/ensure_compute_is_running.ps1 -ComputeName default-machine-cli
 
           - name: Create pipeline
-            if: ${{ env.no_azure_setup != true }}
+            if: ${{ env.no_azure_setup != 'true' }}
             run: az ml job create --file ./aml/pipelines/multiple-ml-algorithms-pipeline.yaml --stream --set name=socialmedia-addiction-${{ github.sha }}-${{ github.run_id }}
 
     download:
@@ -95,7 +95,7 @@ jobs:
 
     build-and-push:
       name: build and push to ghcr
-      needs: download
+      needs: [download, Azure-ML-setup]
       runs-on: self-hosted
       outputs:
         image_tag: ${{ steps.docker-meta-data.outputs.tags }}
@@ -134,7 +134,7 @@ jobs:
           uses: docker/build-push-action@v5.3.0
           with:
             context: ./
-            file: ./inference
+            file: ./inference/Dockerfile
             push: true
             tags: ${{ steps.docker-meta-data.outputs.tags }}
   
