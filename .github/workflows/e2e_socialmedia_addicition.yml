@@ -13,7 +13,7 @@ env:
 
 jobs:
     Azure-ML-setup:
-        if: true
+        if: false
         runs-on: self-hosted
         steps:
           - name: Check out repo
@@ -34,6 +34,12 @@ jobs:
             id: socialmedia_sourcecode
             run: $uriWithSas = ./scripts/azure/build_and_upload_socialmedia_python_scripts.ps1 -workspaceName ${{ env.WORKSPACE }} -resourceGroup ${{ env.GROUP }}
 
+          - name: Socialmedia source code -- Upload source code
+            uses: actions/upload-artifact@v4.3.3
+            with:
+              name:  Socialmedia-SourceCode
+              path: dist
+
           - name: Create environments
             run: ./scripts/azure/create_environments.ps1 -socialmedia_SourceCode_Uri '${{ steps.socialmedia_sourcecode.outputs.socialmedia_sourcecode_uri }}'
 
@@ -51,7 +57,6 @@ jobs:
 
         outputs:
           socialmedia_sourcecode_uri: ${{ steps.socialmedia_sourcecode.outputs.socialmedia_sourcecode_uri }}
-
 
     download-and-package:
       if: true
