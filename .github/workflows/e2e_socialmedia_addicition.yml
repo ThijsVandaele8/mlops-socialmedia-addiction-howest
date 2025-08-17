@@ -64,7 +64,12 @@ jobs:
 
           - name: build and upload socialmedia python code
             id: socialmedia_sourcecode
-            run: ./scripts/azure/build_and_upload_socialmedia_python_scripts.ps1 -workspaceName ${{ env.WORKSPACE }} -resourceGroup ${{ env.GROUP }}
+            run: | 
+                ./scripts/azure/build_and_upload_socialmedia_python_scripts.ps1 `
+                    -workspaceName ${{ env.WORKSPACE }} -resourceGroup ${{ env.GROUP }} `
+                    -contentPath ./dist/socialmedia_mlops-0.1.2-py3-none-any.whl `
+                    -dataYamlPath ./aml/data/code/socialmedia_sourcecode_wheel.yaml `
+                    -dataName socialmedia_modeling_whl
 
           - name: Create environments
             if: ${{ env.no_azure_setup != 'true' }}

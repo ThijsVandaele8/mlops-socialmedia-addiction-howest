@@ -1,5 +1,7 @@
 $schema: https://azuremlschemas.azureedge.net/latest/data.schema.json
 name: socialmedia_modeling_whl
-description: A json file with configuration for k-fold training
+description: A wheel file for source code that needs to be used in environments
 type: uri_file
-path: ../../../dist/socialmedia_mlops-0.1.2-py3-none-any.whl
+path: '{{path}}'
+tags:
+  hash: '{{hash}}'
