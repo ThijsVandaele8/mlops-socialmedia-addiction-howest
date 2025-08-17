@@ -22,7 +22,7 @@ $fullContentPath = (Resolve-Path $contentPath).Path
 Write-Host "Full content path: $fullContentPath"
 
 $fullWheelPath = (Resolve-Path $wheelPath).Path
-Write-Host "Full content path: $fullWheelPath"
+Write-Host "Full wheel path: $fullWheelPath"
 
 $dataInfo = Test-CloudFileHash -contentPath $fullContentPath -dataName $dataName
 
