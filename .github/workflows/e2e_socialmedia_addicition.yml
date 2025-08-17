@@ -23,28 +23,19 @@ jobs:
             uses: actions/checkout@v4
 
           - name: Azure Login
-            if: ${{ env.no_azure_setup != 'true' }}
             uses: azure/login@v1
             with:
              creds: ${{ secrets.AZURE_CREDENTIALS }}
 
           - name: Check if azure ml extension is installed
-            if: ${{ env.no_azure_setup != 'true' }}
             run: az extension add --name ml
 
           - name: Azure configure defaults
-            if: ${{ env.no_azure_setup != 'true' }}
             run: az configure --defaults group=${{ env.GROUP }} workspace=${{ env.WORKSPACE }} location=${{ env.LOCATION }}
 
           - name: build and upload socialmedia python code
             id: socialmedia_sourcecode
             run: $uriWithSas = ./scripts/azure/build_and_upload_socialmedia_python_scripts.ps1 -workspaceName ${{ env.WORKSPACE }} -resourceGroup ${{ env.GROUP }}
-
-          - name: Socialmedia Build source code -- Upload source code
-            uses: actions/upload-artifact@v4.3.3
-            with:
-              name:  Socialmedia-SourceCode-dist
-              path: dist
 
           - name: Create environments
             if: ${{ env.no_azure_setup != 'true' }}
@@ -69,10 +60,8 @@ jobs:
     download:
       if: true
       runs-on: self-hosted
+      needs: Azure-ML-setup
       steps:
-          - name: Check out repo
-            uses: actions/checkout@v4
-
           - name: Azure Login
             uses: azure/login@v1
             with:
@@ -122,12 +111,6 @@ jobs:
           with:
             name: docker-config
             path: inference
-
-        - name: Source code dist -- Download
-          uses: actions/download-artifact@v4.1.7
-          with:
-            name: Socialmedia-SourceCode-dist
-            path: dist
 
         - name: Docker Build and push
           id: docker_build
