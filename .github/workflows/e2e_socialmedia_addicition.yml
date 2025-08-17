@@ -10,6 +10,7 @@ env:
   WORKSPACE: "vandaele-thijs-ml"
   LOCATION: "WestEurope"
   dockerregistry: ghcr.io/thijsvandaele8/mlops-socialmedia-addiction-api
+  computename: default-machine-cli 
   no_azure_setup: 'true'
 
 jobs:
@@ -33,9 +34,19 @@ jobs:
           - name: Azure configure defaults
             run: az configure --defaults group=${{ env.GROUP }} workspace=${{ env.WORKSPACE }} location=${{ env.LOCATION }}
 
+          - name: socialmedia-addiction dataset -- Ensure data exists
+            run: | 
+                  ./scripts/azure/create_datafile_if_changed.ps1 
+                    -contentPath ./data/bronze/Students_Social_Media_Addiction.csv 
+                    -dataYamlPath ./aml/data/datasets/socialmedia-addiction.yaml
+                    -dataName socialmedia_addiction_data
+
+          - name: provide dataset
+            run: ./scripts/azure/ensure_dataset_is_uploaded.ps1
+
           - name: build and upload socialmedia python code
             id: socialmedia_sourcecode
-            run: $uriWithSas = ./scripts/azure/build_and_upload_socialmedia_python_scripts.ps1 -workspaceName ${{ env.WORKSPACE }} -resourceGroup ${{ env.GROUP }}
+            run: ./scripts/azure/build_and_upload_socialmedia_python_scripts.ps1 -workspaceName ${{ env.WORKSPACE }} -resourceGroup ${{ env.GROUP }}
 
           - name: Create environments
             if: ${{ env.no_azure_setup != 'true' }}
@@ -47,11 +58,11 @@ jobs:
 
           - name: Create compute
             if: ${{ env.no_azure_setup != 'true' }}
-            run: ./scripts/azure/create_compute_if_not_exists.ps1 -ComputeName default-machine-cli
+            run: ./scripts/azure/create_compute_if_not_exists.ps1 -ComputeName ${{env.computename}}
 
           - name: Ensure compute is running
             if: ${{ env.no_azure_setup != 'true' }}
-            run: ./scripts/azure/ensure_compute_is_running.ps1 -ComputeName default-machine-cli
+            run: ./scripts/azure/ensure_compute_is_running.ps1 -ComputeName ${{env.computename}}
 
           - name: Create pipeline
             if: ${{ env.no_azure_setup != 'true' }}
